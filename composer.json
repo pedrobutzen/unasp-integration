@@ -1,0 +1,22 @@
+{
+    "name": "unasp/integration",
+    "description": "Integrações entre sistemas do UNASP para ser usado no Laravel",
+    "type": "library",
+    "license": "GPL-3.0-only",
+    "authors": [
+        {
+            "name": "Pedro Butzen",
+            "email": "pedrobutzen@outlook.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+	   "php": ">=7"
+    },
+    "autoload": {
+    	"psr-4": {
+    	    "unasp\\": "src/"
+    	}
+    }
+}
