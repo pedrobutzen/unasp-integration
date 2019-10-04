@@ -5,12 +5,13 @@ namespace unasp;
 use unasp\Rubeus;
 use unasp\Util\Evento;
 
-class sps_iniciou_inscricao extends Evento {
+class sps_nao_compareceu extends Evento {
     private $endpoint = 'evento';
     private $method = 'post';
     private $rules = [
         'codigo',
-        'bk_processo',
+        'bk_curso',
+        'bk_oferta',
     ];
 
     public function __construct() {}
@@ -29,8 +30,13 @@ class sps_iniciou_inscricao extends Evento {
             'pessoa' => [
                 'codigo' => $data['codigo'],
             ],
-            'tipo' => 60, // Evento Rubeus: Iniciou Inscrição
-            'descricao' => "<strong>Curso:</strong> ainda não decidido <br><strong>Processo Seletivo:</strong> {$data['bk_processo']} <br>",
+            'tipo' => 87, // Evento Rubeus: Não Compareceu à Prova
+            'codCurso' => $data['bk_curso'],
+            'codOferta' => $data['bk_oferta'],
+            'camposPersonalizados' => [
+                'comparecimento' => 'Não Compareceu',
+            ],
+            'descricao' => "<p>O candidato não compareceu à prova para o curso {$data['bk_oferta']}.</p>",
         ];
     }
 }

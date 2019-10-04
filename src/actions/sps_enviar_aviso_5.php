@@ -5,12 +5,11 @@ namespace unasp;
 use unasp\Rubeus;
 use unasp\Util\Evento;
 
-class sps_iniciou_inscricao extends Evento {
+class sps_enviar_aviso_5 extends Evento {
     private $endpoint = 'evento';
     private $method = 'post';
     private $rules = [
         'codigo',
-        'bk_processo',
     ];
 
     public function __construct() {}
@@ -25,12 +24,19 @@ class sps_iniciou_inscricao extends Evento {
     }
 
     public function cast_values(array $data) {
+        $data = array_merge([
+            "bk_curso" => null,
+            "bk_oferta" => null,
+        ], $data);
+
         return [
             'pessoa' => [
                 'codigo' => $data['codigo'],
             ],
-            'tipo' => 60, // Evento Rubeus: Iniciou Inscrição
-            'descricao' => "<strong>Curso:</strong> ainda não decidido <br><strong>Processo Seletivo:</strong> {$data['bk_processo']} <br>",
+            'tipo' => 104, // Evento Rubeus: Aviso 5
+            'codCurso' => $data['bk_curso'],
+            'codOferta' => $data['bk_oferta'],
+            'descricao' => "<p>O aviso 5 foi enviado para o lead.</p>",
         ];
     }
 }

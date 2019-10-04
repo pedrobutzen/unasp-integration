@@ -8,14 +8,13 @@ class Integrator {
     }
 
     public static function send($action, array $data = []) {
+        $action = "unasp\\$action";
+
+        if(!class_exists($action))
+            return "Evento {$action} não existe.";
+
         $action = new $action();
-        
+
         return $action->send($data);
-
-        // $data = $action->tratar_dados($data);
-        // $endpoint = $action::$endpoint;
-        // $method = $action->getMethod();
-
-        // return self::call($endpoint, $method, $data);
     }
 }

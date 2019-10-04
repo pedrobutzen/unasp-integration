@@ -5,7 +5,7 @@ namespace unasp;
 use unasp\Rubeus;
 use unasp\Util\Evento;
 
-class sps_iniciou_inscricao extends Evento {
+class sps_iniciou_inscricao_ead extends Evento {
     private $endpoint = 'evento';
     private $method = 'post';
     private $rules = [
@@ -29,7 +29,7 @@ class sps_iniciou_inscricao extends Evento {
             'pessoa' => [
                 'codigo' => $data['codigo'],
             ],
-            'tipo' => 60, // Evento Rubeus: Iniciou Inscrição
+            'tipo' => 201, // Evento Rubeus: Iniciou Inscrição (EAD)
             'descricao' => "<strong>Curso:</strong> ainda não decidido <br><strong>Processo Seletivo:</strong> {$data['bk_processo']} <br>",
         ];
     }

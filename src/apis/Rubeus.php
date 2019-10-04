@@ -13,15 +13,7 @@ class Rubeus {
         "evento" => "/Evento/cadastro",
     ];
 
-    public static function queue($action, array $data = []) {
-        return self::send($action, $data);
-    }
-
-    public static function send($action, array $data = []) {
-        return self::call();
-    }
-
-    private static function call(string $endpoint, $method, array $data = []) {
+    public static function call(string $endpoint, $method, array $data = []) {
         $data = array_merge($data, [
             "origem" => 5, # Processo Seletivo Próprio
             "token" => Config::get('unasp_integrations.RUBEUS_TOKEN'),
@@ -32,20 +24,22 @@ class Rubeus {
         if ($ch === false) {
             throw new Exception('Error on cURL initialization.');
         }
-        
+
         curl_setopt_array($ch, [
             CURLOPT_URL => self::$invokeURL . self::$endpoints[$endpoint],
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_HTTPHEADER => [
-                'Content-Type: application/x-www-form-urlencoded',
+                'Content-Type: application/json',
             ],
             CURLOPT_POST => $method == 'post',
             CURLOPT_POSTFIELDS => json_encode($data),
+            CURLOPT_CONNECTTIMEOUT => 5,
+            CURLOPT_TIMEOUT => 10,
         ]);
 
-        $data = curl_exec($ch);
+        $return = curl_exec($ch);
 
-        if ($data === false) {
+        if ($return === false) {
             throw new Exception(curl_error($ch), curl_errno($ch));
         }
 
@@ -53,7 +47,6 @@ class Rubeus {
         
         curl_close($ch);
 
-        return ['status' => $http_code, 'data' => json_decode($data)];
+        return ['status' => $http_code, 'data' => json_decode($return)];
     }
 }
-

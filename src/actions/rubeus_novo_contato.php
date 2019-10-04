@@ -5,32 +5,34 @@ namespace unasp;
 use unasp\Rubeus;
 use unasp\Util\Evento;
 
-class sps_iniciou_inscricao extends Evento {
-    private $endpoint = 'evento';
+class rubeus_novo_contato extends Evento {
+    private $endpoint = 'contato';
     private $method = 'post';
     private $rules = [
         'codigo',
-        'bk_processo',
+        'nome',
+        'nascimento',
+        'telefone',
+        'email',
     ];
 
     public function __construct() {}
 
     public function send(array $data) {
         if(!$this->validate($this->rules, $data))
-            return;
+            return '';
 
         $data = $this->cast_values($data);
-
         return Rubeus::call($this->endpoint, $this->method, $data);
     }
 
     public function cast_values(array $data) {
         return [
-            'pessoa' => [
-                'codigo' => $data['codigo'],
-            ],
-            'tipo' => 60, // Evento Rubeus: Iniciou Inscrição
-            'descricao' => "<strong>Curso:</strong> ainda não decidido <br><strong>Processo Seletivo:</strong> {$data['bk_processo']} <br>",
+            'codigo' => $data['codigo'],
+            'nome' => $data['nome'],
+            'dataNascimento' => $data['nascimento'],
+            'telefonePrincipal' => $data['telefone'],
+            'emailPrincipal' => $data['email'],
         ];
     }
 }
