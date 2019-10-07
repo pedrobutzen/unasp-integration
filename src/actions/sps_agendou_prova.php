@@ -12,6 +12,7 @@ class sps_agendou_prova extends Evento {
         'codigo',
         'bk_curso',
         'bk_oferta',
+        'data_do_evento',
         'data',
         'hora',
         'local',
@@ -40,6 +41,8 @@ class sps_agendou_prova extends Evento {
             'tipo' => 71, // Evento Rubeus: Agendou Prova
             'codCurso' => $data['bk_curso'],
             'codOferta' => $data['bk_oferta'],
+            'data' => $data['data_do_evento'],
+            'tipoData' => 'Prova',
             'camposPersonalizados' => [
                 'tipodeprova' => 'Prova',
                 'datadaprova12_14_39' => $data['data'],

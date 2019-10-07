@@ -5,7 +5,7 @@ namespace unasp;
 use unasp\Rubeus;
 use unasp\Util\Evento;
 
-class sps_enviar_aviso_confirmação_manual extends Evento {
+class sps_enviar_aviso_confirmacao_manual extends Evento {
     private $endpoint = 'evento';
     private $method = 'post';
     private $rules = [
