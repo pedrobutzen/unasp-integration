@@ -10,8 +10,8 @@ class pos_graduacao_preencheu_dados_pessoais extends Evento {
     private $method = 'post';
     private $rules = [
         'codigo',
-        'bk_curso',
-        'bk_oferta',
+        // 'bk_curso',
+        // 'bk_oferta',
         'nome',
         'nascimento',
         'email',
@@ -34,7 +34,10 @@ class pos_graduacao_preencheu_dados_pessoais extends Evento {
         $data_person = $this->cast_values_person($data);
         $data_event = $this->cast_values_event($data);
         
-        return [Rubeus::call($this->endpoint, $this->method, $data_person), Rubeus::call('evento', 'post', $data_event)];
+        return [
+            Rubeus::call($this->endpoint, $this->method, $data_person), 
+            !is_null($data_event) ? Rubeus::call('evento', 'post', $data_event) : null
+        ];
     }
 
     public function cast_values_person(array $data) {
@@ -57,7 +60,7 @@ class pos_graduacao_preencheu_dados_pessoais extends Evento {
     }
 
     public function cast_values_event(array $data) {
-        return [
+        return array_key_exists('bk_curso', $data) && array_key_exists('bk_oferta', $data) ? [
             'pessoa' => [
                 'codigo' => 'POS - ' . $data['codigo'],
             ],
@@ -70,6 +73,6 @@ class pos_graduacao_preencheu_dados_pessoais extends Evento {
                 <p><strong>Nascimento:</strong> {$data['nascimento']}</p>
                 <p><strong>Telefone:</strong> {$data['telefone']}</p>
                 <p><strong>E-mail:</strong> {$data['email']}</p>",
-        ];
+        ] : null;
     }
 }
