@@ -15,7 +15,7 @@ class CreateTableIntegratorLog extends Migration
     {
         Schema::create('integrator_log', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->timestamp('date');
+            $table->datetime('date');
             $table->string('api');
             $table->text('url');
             $table->string('method');
