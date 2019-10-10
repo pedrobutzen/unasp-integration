@@ -44,6 +44,7 @@ class sps_sincronismo extends Evento {
         ], $data);
 
         return array_filter([
+            'api' => true,
             'pessoa' => [
                 'codigo' => $data['codigo'],
             ],

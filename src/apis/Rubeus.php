@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 class Rubeus {
     public static $invokeURL = "https://crmunasp.rubeus.com.br/api";
+    public static $invokeURLAPI = "https://api.apprbs.com.br/api";
     
     public static $endpoints = [
         "dados_contato" => "/Contato/dadosPessoa",
@@ -20,6 +21,10 @@ class Rubeus {
             "token" => Config::get('unasp_integrations.RUBEUS_TOKEN'),
         ]);
 
+        $data = array_merge(["api" => false,], $data);
+        $url = ($data['api'] ? self::$invokeURLAPI : self::$invokeURL) . self::$endpoints[$endpoint] . ($data['api'] ? '?clnt=unasp' : '');
+        unset($data['api']);
+
         $ch = curl_init();
 
         if ($ch === false) {
@@ -29,7 +34,7 @@ class Rubeus {
         $request = json_encode($data);
 
         curl_setopt_array($ch, [
-            CURLOPT_URL => self::$invokeURL . self::$endpoints[$endpoint],
+            CURLOPT_URL => $url,
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_HTTPHEADER => [
                 'Content-Type: application/json',
@@ -52,7 +57,7 @@ class Rubeus {
         DB::table('integrator_log')->insert([
             'date' => date("Y-m-d H:i:s"),
             'api' => 'rubeus',
-            'url' => self::$invokeURL . self::$endpoints[$endpoint],
+            'url' => $url,
             'method' => $method,
             'request' => $request,
             'duration_in_seconds' => $total_time,
