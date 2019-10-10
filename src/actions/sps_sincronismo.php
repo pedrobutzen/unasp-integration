@@ -11,8 +11,6 @@ class sps_sincronismo extends Evento {
     private $rules = [
         'codigo',
         'tipo',
-        'bk_curso',
-        'bk_oferta',
         'descricao',
     ];
 
@@ -41,6 +39,8 @@ class sps_sincronismo extends Evento {
             "tipo_de_avaliacao" => null,
             "numero_enem" => null,
             "cupom" => null,
+            "bk_curso" => null,
+            "bk_oferta" => null,
         ], $data);
 
         return array_filter([
