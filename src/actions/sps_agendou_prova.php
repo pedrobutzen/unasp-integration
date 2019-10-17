@@ -50,6 +50,7 @@ class sps_agendou_prova extends Evento {
                 'localdaprova' => $data['local'],
                 'enderecodaprova' => $data['endereco'],
                 'comparecimento' => 'Pendente',
+                'numerodoenem' => null,
             ],
             'descricao' => "
                 <p>Uma prova foi agendada para esta pessoa.</p>

@@ -32,6 +32,10 @@ class rubeus_novo_contato extends Evento {
             "sexo" => null,
             "estado" => null,
             "cidade" => null,
+            "cep" => null,
+            "bairro" => null,
+            "endereco" => null,
+            "numero" => null,
         ], $data);
 
         return [
@@ -46,6 +50,10 @@ class rubeus_novo_contato extends Evento {
                 'cidade' => $data['cidade'],
                 'estado' => $data['estado'],
             ],
+            'cep' => $data['cep'],
+            'bairro' => $data['bairro'],
+            'endereco' => $data['endereco'],
+            'numero' => $data['numero'],
         ];
     }
 }

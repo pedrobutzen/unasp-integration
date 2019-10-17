@@ -48,7 +48,7 @@ class sps_alterou_curso extends Evento {
             'camposPersonalizados' => [
                 'inscricaoabandonada' => 0,
             ],
-            'descricao' => "<p>Esta pessoa alterou o seu curso de <strong>{$data['bk_curso_antigo']}</strong> para <strong>{$data['bk_oferta_antiga']}</strong>.</p>",
+            'descricao' => "<p>Esta pessoa alterou o seu curso de <strong>{$data['bk_oferta_antiga']}</strong> para <strong>{$data['bk_oferta']}</strong>.</p>",
         ];
     }
 }

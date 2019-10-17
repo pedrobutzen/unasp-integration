@@ -37,6 +37,11 @@ class sps_solicitou_enem extends Evento {
             'camposPersonalizados' => [
                 'tipodeprova' => 'ENEM',
                 'numerodoenem' => $data['numero'],
+                'datadaprova12_14_39' => null,
+                'horadaprova' => null,
+                'localdaprova' => null,
+                'enderecodaprova' => null,
+                'comparecimento' => null,
             ],
             'descricao' => "
                 <p>Essa pessoa enviou o número do ENEM para ser avaliado.</p>
