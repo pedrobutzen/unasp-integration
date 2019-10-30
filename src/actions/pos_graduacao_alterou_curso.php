@@ -35,7 +35,7 @@ class pos_graduacao_alterou_curso extends Evento {
             'codCurso' => $data['bk_curso'],
             'codOferta' => $data['bk_oferta'],
             'dadosOportunidade' => [
-                'codPessoa' => $data['codigo'],
+                'codPessoa' => 'POS - ' . $data['codigo'],
                 'codCurso' => $data['bk_curso_antigo'],
                 'codOferta' => $data['bk_oferta_antiga'],
             ],
