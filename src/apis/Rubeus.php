@@ -28,7 +28,7 @@ class Rubeus {
         $ch = curl_init();
 
         if ($ch === false) {
-            throw new Exception('Error on cURL initialization.');
+            return ['status' => '500', 'data' => 'Error on cURL initialization.'];
         }
 
         $request = json_encode($data);
@@ -48,7 +48,7 @@ class Rubeus {
         $response = curl_exec($ch);
 
         if ($response === false) {
-            throw new Exception(curl_error($ch), curl_errno($ch));
+            $response = curl_error($ch);
         }
 
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
