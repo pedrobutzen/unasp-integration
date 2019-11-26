@@ -15,23 +15,30 @@ class Rubeus {
         "evento" => "/Evento/cadastro",
     ];
 
-    public static function call(string $endpoint, $method, array $data = []) {
-        $data = array_merge($data, [
-            "origem" => 5, # Processo Seletivo Próprio
-            "token" => Config::get('unasp_integrations.RUBEUS_TOKEN'),
-        ]);
-
-        $data = array_merge(["api" => false,], $data);
-        $url = ($data['api'] ? self::$invokeURLAPI : self::$invokeURL) . self::$endpoints[$endpoint] . ($data['api'] ? '?clnt=unasp' : '');
-        unset($data['api']);
-
+    public static function call(string $endpoint, $method, $data = [], int $retry_id = null) {
         $ch = curl_init();
+
+        if(is_null($retry_id)) {
+            $data = array_merge($data, [
+                "origem" => 5, # Processo Seletivo Próprio
+                "token" => Config::get('unasp_integrations.RUBEUS_TOKEN'),
+            ]);
+
+            $data = array_merge([
+                "api" => false,
+            ], $data);
+            $url = ($data['api'] ? self::$invokeURLAPI : self::$invokeURL) . self::$endpoints[$endpoint] . ($data['api'] ? '?clnt=unasp' : '');
+            unset($data['api']);
+
+            $request = json_encode($data);
+        } else {
+            $url = $endpoint;
+            $request = $data;
+        }
 
         if ($ch === false) {
             return ['status' => '500', 'data' => 'Error on cURL initialization.'];
         }
-
-        $request = json_encode($data);
 
         curl_setopt_array($ch, [
             CURLOPT_URL => $url,
@@ -53,17 +60,27 @@ class Rubeus {
 
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $total_time = curl_getinfo($ch, CURLINFO_TOTAL_TIME);
-        
-        DB::table('integrator_log')->insert([
-            'date' => date("Y-m-d H:i:s"),
-            'api' => 'rubeus',
-            'url' => $url,
-            'method' => $method,
-            'request' => $request,
-            'duration_in_seconds' => $total_time,
-            'response_code' => $http_code,
-            'response_body' => $response,
-        ]);
+
+        if(is_null($retry_id)) {
+            DB::table('integrator_log')->insert([
+                'date' => date("Y-m-d H:i:s"),
+                'api' => 'rubeus',
+                'url' => $url,
+                'method' => $method,
+                'request' => $request,
+                'duration_in_seconds' => $total_time,
+                'response_code' => $http_code,
+                'response_body' => $response,
+            ]);
+        } else {
+            DB::table('retry_integrator_log')->insert([
+                'date' => date("Y-m-d H:i:s"),
+                'integrator_log_id' => $retry_id,
+                'duration_in_seconds' => $total_time,
+                'response_code' => $http_code,
+                'response_body' => $response,
+            ]);
+        }
 
         curl_close($ch);
 

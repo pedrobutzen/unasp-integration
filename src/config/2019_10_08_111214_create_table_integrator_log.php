@@ -24,6 +24,15 @@ class CreateTableIntegratorLog extends Migration
             $table->integer('response_code');
             $table->longText('response_body');
         });
+
+        Schema::create('retry_integrator_log', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->datetime('date');
+            $table->bigInteger('integrator_log_id');
+            $table->integer('duration_in_seconds');
+            $table->integer('response_code');
+            $table->longText('response_body');
+        });
     }
 
     /**
@@ -34,5 +43,6 @@ class CreateTableIntegratorLog extends Migration
     public function down()
     {
         Schema::dropIfExists('integrator_log');
+        Schema::dropIfExists('retry_integrator_log');
     }
 }
