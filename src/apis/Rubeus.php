@@ -3,6 +3,8 @@
 namespace unasp;
 
 use Config;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\DB;
 
 class Rubeus {
@@ -16,7 +18,10 @@ class Rubeus {
     ];
 
     public static function call(string $endpoint, $method, $data = [], int $retry_id = null) {
-        $ch = curl_init();
+        $data = array_merge([
+            "api" => false,
+            "return_response" => false,
+        ], $data);
 
         if(is_null($retry_id)) {
             $data = array_merge($data, [
@@ -24,42 +29,47 @@ class Rubeus {
                 "token" => Config::get('unasp_integrations.RUBEUS_TOKEN'),
             ]);
 
-            $data = array_merge([
-                "api" => false,
-            ], $data);
-            $url = ($data['api'] ? self::$invokeURLAPI : self::$invokeURL) . self::$endpoints[$endpoint] . ($data['api'] ? '?clnt=unasp' : '');
-            unset($data['api']);
+            $url = ($data['api'] ? 
+                self::$invokeURLAPI : 
+                self::$invokeURL) . self::$endpoints[$endpoint] . ($data['api'] ? '?clnt=unasp' : '');
 
-            $request = json_encode($data);
+            $request_body = json_encode($data);
         } else {
             $url = $endpoint;
-            $request = $data;
+            $request_body = $data;
         }
 
-        if ($ch === false) {
-            return ['status' => '500', 'data' => 'Error on cURL initialization.'];
+        $return_response = $data['return_response'];
+
+        unset($data['api']);
+        unset($data['return_response']);
+
+        $client = new Client();
+        $total_time = 0;
+
+        $time_start = microtime(1);
+        try {
+            $response = $client->request($method, $url, [
+                'headers'         => [
+                    'Content-Type' => 'application/json',
+                ],
+                'body'            => $request_body,
+                'connect_timeout' => 5,
+                'timeout'         => 10,
+            ]);
+
+            $response_body = $response->getBody()->getContents();
+            $response_body_object = json_decode($response_body);
+
+            $http_code = !$return_response ? ($response_body_object && !$response_body_object->success ? 400 : $response->getStatusCode()) : $response->getStatusCode();
+        } catch (RequestException $e) {
+            $response = $e->hasResponse() ? $e->getResponse() : NULL;
+
+            $response_body = !is_null($response) ? $response->getBody()->getContents() : $e->getMessage();
+            $http_code = !is_null($response) ? $response->getStatusCode() : (strstr($response_body, 'Operation timed out after') ? 408 : 0);
         }
-
-        curl_setopt_array($ch, [
-            CURLOPT_URL => $url,
-            CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_HTTPHEADER => [
-                'Content-Type: application/json',
-            ],
-            CURLOPT_POST => $method == 'post',
-            CURLOPT_POSTFIELDS => $request,
-            CURLOPT_CONNECTTIMEOUT => 5,
-            CURLOPT_TIMEOUT => 10,
-        ]);
-
-        $response = curl_exec($ch);
-
-        if ($response === false) {
-            $response = curl_error($ch);
-        }
-
-        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $total_time = curl_getinfo($ch, CURLINFO_TOTAL_TIME);
+        $time_end = microtime(1);
+        $total_time = $time_end - $time_start;
 
         if(is_null($retry_id)) {
             DB::table('integrator_log')->insert([
@@ -67,10 +77,10 @@ class Rubeus {
                 'api' => 'rubeus',
                 'url' => $url,
                 'method' => $method,
-                'request' => $request,
+                'request' => $request_body,
                 'duration_in_seconds' => $total_time,
                 'response_code' => $http_code,
-                'response_body' => $response,
+                'response_body' => $response_body,
             ]);
         } else {
             DB::table('retry_integrator_log')->insert([
@@ -78,15 +88,10 @@ class Rubeus {
                 'integrator_log_id' => $retry_id,
                 'duration_in_seconds' => $total_time,
                 'response_code' => $http_code,
-                'response_body' => $response,
+                'response_body' => $response_body,
             ]);
         }
 
-        curl_close($ch);
-
-        if (json_last_error() == JSON_ERROR_NONE)
-            $response = json_decode($response);
-
-        return ['status' => $http_code, 'data' => $response];
+        return ['status' => $http_code, 'data' => json_decode($response_body)];
     }
 }

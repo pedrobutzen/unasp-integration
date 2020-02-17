@@ -26,6 +26,7 @@ class rubeus_contato_existe extends Evento {
     public function cast_values(array $data) {
         return [
             'codigo' => $data['codigo'],
+            'return_response' => true,
         ];
     }
 }
