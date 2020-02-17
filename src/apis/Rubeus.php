@@ -23,6 +23,9 @@ class Rubeus {
             "return_response" => false,
         ], $data);
 
+        $return_response = $data['return_response'];
+        unset($data['return_response']);
+
         if(is_null($retry_id)) {
             $data = array_merge($data, [
                 "origem" => 5, # Processo Seletivo Próprio
@@ -33,16 +36,16 @@ class Rubeus {
                 self::$invokeURLAPI : 
                 self::$invokeURL) . self::$endpoints[$endpoint] . ($data['api'] ? '?clnt=unasp' : '');
 
+            unset($data['api']);
+            
             $request_body = json_encode($data);
         } else {
+            unset($data['api']);
+
             $url = $endpoint;
             $request_body = $data;
         }
 
-        $return_response = $data['return_response'];
-
-        unset($data['api']);
-        unset($data['return_response']);
 
         $client = new Client();
         $total_time = 0;
