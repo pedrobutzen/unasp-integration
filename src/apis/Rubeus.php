@@ -18,13 +18,7 @@ class Rubeus {
     ];
 
     public static function call(string $endpoint, $method, $data = [], int $retry_id = null) {
-        $data = array_merge([
-            "api" => false,
-            "return_response" => false,
-        ], $data);
-
-        $return_response = $data['return_response'];
-        unset($data['return_response']);
+        $return_response = $endpoint == 'dados_contato' ? true : false;
 
         if(is_null($retry_id)) {
             $data = array_merge($data, [
@@ -32,20 +26,21 @@ class Rubeus {
                 "token" => Config::get('unasp_integrations.RUBEUS_TOKEN'),
             ]);
 
+            $data = array_merge([
+                "api" => false
+            ], $data);
+
             $url = ($data['api'] ? 
                 self::$invokeURLAPI : 
                 self::$invokeURL) . self::$endpoints[$endpoint] . ($data['api'] ? '?clnt=unasp' : '');
 
             unset($data['api']);
-            
+
             $request_body = json_encode($data);
         } else {
-            unset($data['api']);
-
             $url = $endpoint;
             $request_body = $data;
         }
-
 
         $client = new Client();
         $total_time = 0;
