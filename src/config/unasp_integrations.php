@@ -17,5 +17,6 @@ return [
     |
     */
 
-	'RUBEUS_TOKEN' => '<YOUR_RUBEUS_TOKEN>',
+    'RUBEUS_ORIGEM' => '<YOUR_RUBEUS_ORIGEM>',
+    'RUBEUS_TOKEN' => '<YOUR_RUBEUS_TOKEN>',
 ];

@@ -22,7 +22,7 @@ class Rubeus {
 
         if(is_null($retry_id)) {
             $data = array_merge($data, [
-                "origem" => 5, # Processo Seletivo Próprio
+                "origem" => Config::get('unasp_integrations.RUBEUS_ORIGEM') ?? 5, # Processo Seletivo Próprio
                 "token" => Config::get('unasp_integrations.RUBEUS_TOKEN'),
             ]);
 
