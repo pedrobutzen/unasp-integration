@@ -44,9 +44,9 @@ class ProcessaFilaDeChamadas extends Command
             ->get()
             ->each(function($item_queue, $key) {
                 $return = Integrator::send($item_queue->action, json_decode($item_queue->data, true));
-
-                echo $item_queue->id . " - " . $return['status'] . "\n";
+                
                 $item_queue->delete();
+                echo $item_queue->id . " - " . $return['status'] . "\n";
 
                 sleep(1);
             });
