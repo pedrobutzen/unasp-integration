@@ -26,6 +26,10 @@ class Queue extends Model
         return $query->where('blocked', 0);
     }
 
+    public function getLocalCodigoAttribute() {
+        return explode("FADMINAS-", explode("}", explode(",", explode("\"codigo\":", $this->data)[1])[0])[0])[1];
+    }
+
     public function getCrmCodigoAttribute() {
         return explode("}", explode(",", explode("\"codigo\":", $this->data)[1])[0])[0];
     }
