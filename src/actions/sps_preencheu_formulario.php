@@ -33,6 +33,10 @@ class sps_preencheu_formulario extends Evento {
     }
 
     public function cast_values_person(array $data) {
+        $data = array_merge([
+            "nacionalidade" => null,
+        ], $data);
+
         return [
             'codigo' => $data['codigo'],
             'nome' => $data['nome'],
@@ -44,6 +48,9 @@ class sps_preencheu_formulario extends Evento {
             'estadoCidade' => [
                 'cidade' => $data['cidade'],
                 'estado' => $data['estado'],
+            ],
+            'camposPersonalizados' => [
+                'nacionalidade_compl_cont' => $data['nacionalidade'],
             ],
         ];
     }
