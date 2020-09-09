@@ -13,7 +13,7 @@
     "prefer-stable": true,
     "require": {
 	   "php": ">=7",
-        "guzzlehttp/guzzle": "^6.5"
+       "guzzlehttp/guzzle": "^7.0"
     },
     "autoload": {
     	"psr-4": {
